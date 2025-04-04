@@ -16,7 +16,7 @@ export default function Home() {
           <p className="text-lg md:text-xl text-gray-300 max-w-xl mb-8">
             F1 drama. Data insights. Fan obsession.
           </p>
-          <Link href="#featured">
+          <Link href="#featured" legacyBehavior>
             <a className="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg transition">Explore the Grid</a>
           </Link>
         </section>
@@ -75,7 +75,7 @@ export default function Home() {
         <section className="py-20 px-6 bg-black text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Welcome to the Fan Zone</h2>
           <p className="text-gray-400 mb-6">Quizzes, memes, hot takes and more from the passionate side of the paddock.</p>
-          <Link href="/fanzone">
+          <Link href="/fanzone" legacyBehavior>
             <a className="bg-yellow-400 text-black font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition">
               Dive In
             </a>
