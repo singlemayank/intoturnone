@@ -5,47 +5,6 @@ import { useEffect, useState } from 'react';
 import NextUpBanner from '@/components/NextUpBanner';
 
 export default function Home() {
-  const [countdown, setCountdown] = useState('Loading...');
-  const [raceName, setRaceName] = useState('Next Grand Prix');
-
-  useEffect(() => {
-    const fetchNextRace = async () => {
-      try {
-        const res = await fetch('/api/next-race');
-        const data = await res.json();
-        console.log("Race API Data:", data); // ← Add this
-
-        const raceDate = new Date(data.date);
-        setRaceName(data.name || 'Next Grand Prix');
-
-        const updateCountdown = () => {
-          const now = new Date();
-          const diff = raceDate.getTime() - now.getTime();
-
-          if (diff <= 0) {
-            setCountdown('Race in progress or finished');
-            return;
-          }
-
-          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-          const minutes = Math.floor((diff / (1000 * 60)) % 60);
-          const seconds = Math.floor((diff / 1000) % 60);
-
-          setCountdown(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-        };
-
-        updateCountdown();
-        const timer = setInterval(updateCountdown, 1000);
-        return () => clearInterval(timer);
-      } catch (error) {
-        console.error('Failed to fetch race data:', error);
-        setRaceName('Unable to load race');
-      }
-    };
-
-    fetchNextRace();
-  }, []);
-
   return (
     <>
       <Head>
