@@ -1,16 +1,60 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import NextUpBanner from '@/components/NextUpBanner';
 
 export default function Home() {
+  const [countdown, setCountdown] = useState('Loading...');
+  const [raceName, setRaceName] = useState('Next Grand Prix');
+
+  useEffect(() => {
+    const fetchNextRace = async () => {
+      try {
+        const res = await fetch('/api/next-race');
+        const data = await res.json();
+        console.log("Race API Data:", data); // ← Add this
+
+        const raceDate = new Date(data.date);
+        setRaceName(data.name || 'Next Grand Prix');
+
+        const updateCountdown = () => {
+          const now = new Date();
+          const diff = raceDate.getTime() - now.getTime();
+
+          if (diff <= 0) {
+            setCountdown('Race in progress or finished');
+            return;
+          }
+
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((diff / (1000 * 60)) % 60);
+          const seconds = Math.floor((diff / 1000) % 60);
+
+          setCountdown(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+        };
+
+        updateCountdown();
+        const timer = setInterval(updateCountdown, 1000);
+        return () => clearInterval(timer);
+      } catch (error) {
+        console.error('Failed to fetch race data:', error);
+        setRaceName('Unable to load race');
+      }
+    };
+
+    fetchNextRace();
+  }, []);
+
   return (
     <>
       <Head>
         <title>Into Turn One | F1 News, Strategy & Tech</title>
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <header className="w-full bg-black py-4 px-6 border-b border-gray-800 text-white flex justify-between items-center">
+      <header className="sticky top-0 z-50 w-full bg-black py-4 px-6 border-b border-gray-800 text-white flex justify-between items-center">
+        <Image src="/favicon.png" alt="Turn1 Logo" width={48} height={48} className="rounded-full" />
         <h1 className="text-2xl font-bold font-orbitron">Into Turn One</h1>
         <nav className="space-x-4">
           <Link href="#featured" className="hover:text-red-500">Featured</Link>
@@ -19,6 +63,7 @@ export default function Home() {
           <Link href="/fanzone" className="hover:text-red-500">Fan Zone</Link>
         </nav>
       </header>
+      <NextUpBanner /> {/* ✅ New banner appears here */}
 
       <main className="min-h-screen bg-black text-white font-sans">
         {/* Hero Section */}
@@ -26,9 +71,9 @@ export default function Home() {
           <Image
             src="/20250404_2331_Cinematic F1 Wet Turn_simple_compose_01jr0zdsgxe3nrvxc8w7nvtgdx.png"
             alt="Hero Turn 1"
-            layout="fill"
-            objectFit="cover"
-            className="z-0 opacity-80"
+            fill
+            priority
+            className="object-cover z-0 opacity-80"
           />
           <div className="z-10 px-6">
             <h1 className="text-6xl md:text-7xl font-extrabold text-red-600 mb-4 font-orbitron">Into Turn One</h1>
@@ -74,13 +119,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </section>
-
-        {/* Next Race */}
-        <section className="py-16 px-6 bg-gray-900 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-white">Next Race: TBD Grand Prix</h2>
-          <p className="text-gray-400 mb-6">Countdown and location info coming soon.</p>
-          <div className="text-5xl font-bold text-red-500">00:00:00</div>
         </section>
 
         {/* Latest Posts */}
