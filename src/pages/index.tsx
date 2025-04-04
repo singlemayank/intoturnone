@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import NextUpBanner from '@/components/NextUpBanner';
 
 export default function Home() {
