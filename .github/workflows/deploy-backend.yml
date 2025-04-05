@@ -1,0 +1,44 @@
+name: 🚀 Deploy FastAPI to EC2
+
+on:
+  push:
+    branches:
+      - main  # Change this if you want to deploy from a different branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 📦 Prepare deployment folder
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            rm -rf ${{ secrets.EC2_PATH }}
+            mkdir -p ${{ secrets.EC2_PATH }}
+          EOF
+
+      - name: 🚀 Upload backend code to EC2
+        run: |
+          scp -r ./apps/backend/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.EC2_PATH }}
+
+      - name: ⚙️ Setup Python & Restart FastAPI
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ${{ secrets.EC2_PATH }}
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            sudo systemctl restart ${{ secrets.EC2_SERVICE_NAME }}
+          EOF
+
