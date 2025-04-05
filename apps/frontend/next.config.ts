@@ -12,5 +12,5 @@ const nextConfig: NextConfig = {
     ];
   },
 };
-#comment
+//comment
 export default nextConfig;
