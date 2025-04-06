@@ -1,12 +1,13 @@
 'use client';
-import { useDriverStandings, useConstructorStandings } from '@/hooks/useF1Data';
+
+import {
+  useDriverStandings,
+  useConstructorStandings,
+} from '@/hooks/useF1Data';
 
 export default function StandingsPreview() {
   const { drivers, isLoading: loadingDrivers } = useDriverStandings();
   const { constructors, isLoading: loadingConstructors } = useConstructorStandings();
-
-  console.log('drivers', drivers);
-  console.log('constructors', constructors);
 
   return (
     <div className="grid md:grid-cols-2 gap-6">
@@ -17,13 +18,13 @@ export default function StandingsPreview() {
           <p className="text-white">Loading...</p>
         ) : (
           <ul className="space-y-2">
-            {drivers?.map((driver) => (
+            {drivers?.slice(0, 5).map((driver) => (
               <li
-                key={driver.driver}
+                key={driver.driverId}
                 className="flex justify-between text-white text-sm border-b border-gray-700 pb-1"
               >
                 <span className="font-medium">
-                  {driver.position}. {driver.driver}
+                  {driver.position}. {driver.full_name}
                 </span>
                 <span>{driver.points} pts</span>
               </li>
@@ -39,9 +40,9 @@ export default function StandingsPreview() {
           <p className="text-white">Loading...</p>
         ) : (
           <ul className="space-y-2">
-            {constructors?.map((constructor) => (
+            {constructors?.slice(0, 5).map((constructor) => (
               <li
-                key={constructor.name}
+                key={constructor.constructorId}
                 className="flex justify-between text-white text-sm border-b border-gray-700 pb-1"
               >
                 <span className="font-medium">
@@ -56,5 +57,3 @@ export default function StandingsPreview() {
     </div>
   );
 }
-
-

@@ -3,39 +3,23 @@ import fastf1
 import pandas as pd
 from fastf1 import get_event_schedule, get_session
 from datetime import datetime
-from fastf1.core import Laps
+import math
 
 # Ensure cache directory exists
 os.makedirs('/tmp/fastf1_cache', exist_ok=True)
 fastf1.Cache.enable_cache('/tmp/fastf1_cache')
 
-# Map nationalities to ISO 3166-1 alpha-2 country codes (for flags)
 NATIONALITY_FLAG_MAP = {
-    "British": "GB",
-    "German": "DE",
-    "Dutch": "NL",
-    "Spanish": "ES",
-    "Finnish": "FI",
-    "Mexican": "MX",
-    "Australian": "AU",
-    "Canadian": "CA",
-    "French": "FR",
-    "Japanese": "JP",
-    "Monegasque": "MC",
-    "Danish": "DK",
-    "Chinese": "CN",
-    "Thai": "TH",
-    "Italian": "IT",
-    "American": "US",
-    "Brazilian": "BR",
-    # Add more mappings if needed
+    "British": "GB", "German": "DE", "Dutch": "NL", "Spanish": "ES", "Finnish": "FI",
+    "Mexican": "MX", "Australian": "AU", "Canadian": "CA", "French": "FR", "Japanese": "JP",
+    "Monegasque": "MC", "Danish": "DK", "Chinese": "CN", "Thai": "TH", "Italian": "IT",
+    "American": "US", "Brazilian": "BR"
 }
 
 def get_race_results():
     current_year = datetime.now().year
     schedule = get_event_schedule(current_year)
 
-    # Convert to naive datetime to avoid comparison issues
     now = pd.Timestamp.utcnow().tz_localize(None)
     past_races = schedule[schedule['EventDate'] < now]
 
@@ -52,32 +36,53 @@ def get_race_results():
     fastest_lap = laps.pick_fastest()
 
     for drv in session.results.itertuples():
+        try:
+            position = int(drv.Position) if not math.isnan(drv.Position) else None
+        except Exception:
+            position = None
+
+        try:
+            driver_info = session.drivers[session.drivers['Abbreviation'] == drv.Abbreviation].iloc[0]
+            full_name = f"{driver_info['FirstName']} {driver_info['LastName']}"
+            nationality = driver_info.get("Nationality", "Unknown")
+        except Exception:
+            full_name = drv.Abbreviation
+            nationality = "Unknown"
+
+        flag = NATIONALITY_FLAG_MAP.get(nationality, "XX")
+
         results.append({
-            "position": int(drv.Position),
+            "position": position,
             "driver_number": drv.DriverNumber,
-            "full_name": f"{drv.FirstName} {drv.LastName}",
+            "full_name": full_name,
             "abbreviation": drv.Abbreviation,
             "team": drv.TeamName,
             "time": str(drv.Time),
             "points": drv.Points,
-            "nationality": drv.Nationality,
-            "flag": NATIONALITY_FLAG_MAP.get(drv.Nationality, "XX")
+            "nationality": nationality,
+            "flag": flag
         })
 
-    fastest_info = None
+    """ fastest_info = None
     if fastest_lap is not None:
-        drv = fastest_lap["Driver"]
-        driver_row = session.get_driver_by_code(drv)
-        fastest_info = {
-            "full_name": f"{driver_row['FirstName']} {driver_row['LastName']}",
-            "abbreviation": drv,
-            "team": fastest_lap["Team"],
-            "lap_time": str(fastest_lap["LapTime"]),
-            "lap_number": int(fastest_lap["LapNumber"]),
-            "position": int(fastest_lap["Position"]),
-            "flag": NATIONALITY_FLAG_MAP.get(driver_row["Nationality"], "XX"),
-        }
+        try:
+            drv = fastest_lap["Driver"]
+            driver_row = session.drivers[session.drivers['Abbreviation'] == drv].iloc[0]
+            nationality = driver_row.get("Nationality", "Unknown")
+            full_name = f"{driver_row['FirstName']} {driver_row['LastName']}"
 
+            fastest_info = {
+                "full_name": full_name,
+                "abbreviation": drv,
+                "team": fastest_lap["Team"],
+                "lap_time": str(fastest_lap["LapTime"]),
+                "lap_number": int(fastest_lap["LapNumber"]),
+                "position": int(fastest_lap["Position"]) if not math.isnan(fastest_lap["Position"]) else None,
+                "flag": NATIONALITY_FLAG_MAP.get(nationality, "XX"),
+            }
+        except Exception:
+            fastest_info = None
+ """
     return {
         "race_name": last_race["EventName"],
         "date": str(last_race["EventDate"]),
@@ -88,5 +93,5 @@ def get_race_results():
         },
         "winner": results[0] if results else None,
         "results": results,
-        "fastest_lap": fastest_info
+        #"fastest_lap": fastest_info
     }

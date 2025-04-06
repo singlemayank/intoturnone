@@ -48,3 +48,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 #edit
+.DS_Store, 
+.next/, 
+venv/

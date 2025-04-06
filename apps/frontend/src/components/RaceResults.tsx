@@ -9,7 +9,7 @@ export default function RaceResults() {
   if (isLoading) return <p className="text-white">Loading race results...</p>;
   if (isError || !raceResults) return <p className="text-red-500">Failed to load race results.</p>;
 
-  const { race_name, date, winner, fastest_lap, results } = raceResults;
+  const { race_name, date, winner, results } = raceResults;
 
   return (
     <div className="bg-black/90 p-4 rounded-md border border-red-600 text-white">
@@ -20,13 +20,6 @@ export default function RaceResults() {
         <h3 className="text-lg font-bold text-green-400">🏆 Winner</h3>
         <p>
           {winner.position}. {winner.full_name} ({winner.team}) – {winner.time}
-        </p>
-      </div>
-
-      <div className="mb-4">
-        <h3 className="text-lg font-bold text-yellow-400">⏱ Fastest Lap</h3>
-        <p>
-          {fastest_lap.full_name} ({fastest_lap.team}) – {fastest_lap.lap_time}
         </p>
       </div>
 
