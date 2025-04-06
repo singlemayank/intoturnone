@@ -10,7 +10,7 @@ type SessionInfo = {
 };
 
 export default function NextUpBanner() {
-  const { nextRace, isLoading } = useNextRace();
+  const { nextRace, } = useNextRace();
   const [nextSession, setNextSession] = useState<SessionInfo | null>(null);
   const [countdown, setCountdown] = useState('Loading...');
   const [revealBanner, setRevealBanner] = useState(false);
