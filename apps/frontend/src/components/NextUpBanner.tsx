@@ -32,20 +32,34 @@ export default function NextUpBanner() {
 
     const sessions: SessionInfo[] = [];
 
-    const extract = (label: string, key: string) => {
-      const session = nextRace[key];
-      if (session?.date && session?.time) {
-        sessions.push({
-          name: label,
-          dateTime: `${session.date}T${session.time}`,
-        });
-      }
-    };
-
-    extract('Practice 1', 'FirstPractice');
-    extract('Practice 2', 'SecondPractice');
-    extract('Qualifying', 'Qualifying');
-    extract('Race', 'race');
+    if (nextRace?.FirstPractice?.date && nextRace.FirstPractice.time) {
+      sessions.push({
+        name: 'Practice 1',
+        dateTime: `${nextRace.FirstPractice.date}T${nextRace.FirstPractice.time}`,
+      });
+    }
+    
+    if (nextRace?.SecondPractice?.date && nextRace.SecondPractice.time) {
+      sessions.push({
+        name: 'Practice 2',
+        dateTime: `${nextRace.SecondPractice.date}T${nextRace.SecondPractice.time}`,
+      });
+    }
+    
+    if (nextRace?.Qualifying?.date && nextRace.Qualifying.time) {
+      sessions.push({
+        name: 'Qualifying',
+        dateTime: `${nextRace.Qualifying.date}T${nextRace.Qualifying.time}`,
+      });
+    }
+    
+    if (nextRace?.date && nextRace.time) {
+      sessions.push({
+        name: 'Race',
+        dateTime: `${nextRace.date}T${nextRace.time}`,
+      });
+    }
+    
 
     const now = new Date();
     const next = sessions.find((s) => new Date(s.dateTime) > now);

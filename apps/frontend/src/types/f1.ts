@@ -14,6 +14,9 @@ export interface DriverStanding {
   }
   
   export interface UpcomingRace {
+    SecondPractice: any;
+    Qualifying: any;
+    FirstPractice: any;
     raceName: string;
     date: string;
     time: string;
