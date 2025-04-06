@@ -5,9 +5,9 @@ import Header from '@/components/Header';
 import NextUpBanner from '@/components/NextUpBanner';
 import FeaturedCarousel from '@/components/FeaturedCarousel';
 import TrendingSection from '@/components/TrendingSection';
-import RaceCalendarWidget from '@/components/RaceCalendarWidget';
 import StandingsPreview from '@/components/StandingsPreview';
 import NewsletterSignup from '@/components/NewsletterSignup';
+import RaceResults from '@/components/RaceResults';
 
 export default function HomePage() {
   return (
@@ -53,22 +53,24 @@ export default function HomePage() {
           <TrendingSection />
         </section>
 
-        {/* Calendar & Standings */}
+        {/* Standings */}
         <section className="py-16 px-6 flex flex-col lg:flex-row gap-10 max-w-7xl mx-auto">
-          {/*
-          <div className="flex-1">
-            <RaceCalendarWidget />
-          </div>
-          */}
           <div className="flex-1">
             <StandingsPreview />
           </div>
+        </section>
+
+        {/* Race Results */}
+        <section className="py-16 px-6 max-w-7xl mx-auto">
+          <RaceResults />
         </section>
 
         {/* Newsletter */}
         <section className="py-12 px-6 bg-gray-900">
           <NewsletterSignup />
         </section>
+
+
       </main>
     </>
   );
