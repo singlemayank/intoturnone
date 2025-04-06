@@ -1,3 +1,4 @@
+#fastf1_service.py
 import os
 import fastf1
 import pandas as pd
@@ -6,8 +7,8 @@ from datetime import datetime
 import math
 
 # Ensure cache directory exists
-os.makedirs('/tmp/fastf1_cache', exist_ok=True)
-fastf1.Cache.enable_cache('/tmp/fastf1_cache')
+os.makedirs('/home/ubuntu/.fastf1_cache', exist_ok=True)
+fastf1.Cache.enable_cache('/home/ubuntu/.fastf1_cache')
 
 NATIONALITY_FLAG_MAP = {
     "British": "GB", "German": "DE", "Dutch": "NL", "Spanish": "ES", "Finnish": "FI",
@@ -18,7 +19,14 @@ NATIONALITY_FLAG_MAP = {
 
 def get_race_results():
     current_year = datetime.now().year
-    schedule = get_event_schedule(current_year)
+
+    try:
+        schedule = get_event_schedule(current_year)
+    except Exception as e:
+        return {
+            "error": "Failed to load event schedule",
+            "details": str(e)
+        }
 
     now = pd.Timestamp.utcnow().tz_localize(None)
     past_races = schedule[schedule['EventDate'] < now]
@@ -28,12 +36,19 @@ def get_race_results():
 
     last_race = past_races.iloc[-1]
     round_number = int(last_race["RoundNumber"])
-    session = get_session(current_year, round_number, "R")
-    session.load()
+
+    try:
+        session = get_session(current_year, round_number, "R")
+        session.load()
+    except Exception as e:
+        return {
+            "error": "Failed to load race session",
+            "details": str(e)
+        }
 
     results = []
     laps = session.laps
-    fastest_lap = laps.pick_fastest()
+    #fastest_lap = laps.pick_fastest()
 
     for drv in session.results.itertuples():
         try:
@@ -63,26 +78,6 @@ def get_race_results():
             "flag": flag
         })
 
-    """ fastest_info = None
-    if fastest_lap is not None:
-        try:
-            drv = fastest_lap["Driver"]
-            driver_row = session.drivers[session.drivers['Abbreviation'] == drv].iloc[0]
-            nationality = driver_row.get("Nationality", "Unknown")
-            full_name = f"{driver_row['FirstName']} {driver_row['LastName']}"
-
-            fastest_info = {
-                "full_name": full_name,
-                "abbreviation": drv,
-                "team": fastest_lap["Team"],
-                "lap_time": str(fastest_lap["LapTime"]),
-                "lap_number": int(fastest_lap["LapNumber"]),
-                "position": int(fastest_lap["Position"]) if not math.isnan(fastest_lap["Position"]) else None,
-                "flag": NATIONALITY_FLAG_MAP.get(nationality, "XX"),
-            }
-        except Exception:
-            fastest_info = None
- """
     return {
         "race_name": last_race["EventName"],
         "date": str(last_race["EventDate"]),
@@ -93,5 +88,4 @@ def get_race_results():
         },
         "winner": results[0] if results else None,
         "results": results,
-        #"fastest_lap": fastest_info
     }
