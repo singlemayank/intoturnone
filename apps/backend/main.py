@@ -10,10 +10,17 @@ app = FastAPI(
     redoc_url="/redoc"  # ReDoc UI
 )
 
-# Optional: Enable CORS for your frontend on Vercel
+
+# ✅ Allow CORS from your frontend domain
+origins = [
+    "https://intoturnone.com",
+    # optionally allow local dev too
+    "http://localhost:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to ["https://intoturnone.com"] in production
+    allow_origins=origins,  # or ["*"] for public APIs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
