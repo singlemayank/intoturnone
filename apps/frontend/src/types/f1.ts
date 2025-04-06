@@ -12,11 +12,14 @@ export interface DriverStanding {
     points: string;
     wins: string;
   }
-  
+  export interface Session {
+    date: string;
+    time: string;
+  }
   export interface UpcomingRace {
-    SecondPractice: any;
-    Qualifying: any;
-    FirstPractice: any;
+    FirstPractice?: Session;
+    SecondPractice?: Session;
+    Qualifying?: Session;
     raceName: string;
     date: string;
     time: string;

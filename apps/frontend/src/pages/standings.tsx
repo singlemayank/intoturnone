@@ -6,7 +6,17 @@ interface Driver {
   points: number;
   position: number;
 }
-
+interface DriverStandingAPI {
+  Driver: {
+    givenName: string;
+    familyName: string;
+  };
+  Constructors: {
+    name: string;
+  }[];
+  points: string;
+  position: string;
+}
 export default function StandingsPage({ drivers }: { drivers: Driver[] }) {
   return (
     <div className="min-h-screen bg-black text-white px-6 py-12">
@@ -36,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
     const standings = json.MRData.StandingsTable.StandingsLists[0].DriverStandings;
 
-    const drivers: Driver[] = standings.slice(0, 5).map((entry: any) => ({
+    const drivers: Driver[] = standings.slice(0, 5).map((entry: DriverStandingAPI) => ({
       name: `${entry.Driver.givenName} ${entry.Driver.familyName}`,
       constructor: entry.Constructors[0].name,
       points: parseInt(entry.points),
