@@ -44,48 +44,71 @@ export interface ConstructorStanding {
   name: string;
 }
 
-// Fetcher
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+// ✅ Use base API URL without `/api` prefix
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
-// Drivers
+// ✅ Fetcher with error handling
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+};
+
+// ✅ Drivers
 export const useDriverStandings = () => {
-  const { data, error, isLoading } = useSWR<DriverStandingRaw[]>('/api/standings/drivers', fetcher);
+  const { data, error, isLoading } = useSWR<DriverStandingRaw[]>(
+    `${API_BASE}/standings/drivers`,
+    fetcher
+  );
 
-  const mapped: DriverStanding[] = data?.map((item) => ({
-    driverId: item.Driver.driverId,
-    position: parseInt(item.position),
-    points: parseInt(item.points),
-    wins: parseInt(item.wins),
-    full_name: `${item.Driver.givenName} ${item.Driver.familyName}`,
-    team: item.Constructors[0]?.name || 'Unknown',
-  })) || [];
+  const mapped: DriverStanding[] =
+    data?.map((item) => ({
+      driverId: item.Driver.driverId,
+      position: parseInt(item.position),
+      points: parseInt(item.points),
+      wins: parseInt(item.wins),
+      full_name: `${item.Driver.givenName} ${item.Driver.familyName}`,
+      team: item.Constructors[0]?.name || 'Unknown',
+    })) || [];
 
   return { drivers: mapped, isLoading, isError: !!error };
 };
 
-// Constructors
+// ✅ Constructors
 export const useConstructorStandings = () => {
-  const { data, error, isLoading } = useSWR<ConstructorStandingRaw[]>('/api/standings/constructors', fetcher);
+  const { data, error, isLoading } = useSWR<ConstructorStandingRaw[]>(
+    `${API_BASE}/standings/constructors`,
+    fetcher
+  );
 
-  const mapped: ConstructorStanding[] = data?.map((item) => ({
-    constructorId: item.Constructor.constructorId,
-    position: parseInt(item.position),
-    points: parseInt(item.points),
-    wins: parseInt(item.wins),
-    name: item.Constructor.name,
-  })) || [];
+  const mapped: ConstructorStanding[] =
+    data?.map((item) => ({
+      constructorId: item.Constructor.constructorId,
+      position: parseInt(item.position),
+      points: parseInt(item.points),
+      wins: parseInt(item.wins),
+      name: item.Constructor.name,
+    })) || [];
 
   return { constructors: mapped, isLoading, isError: !!error };
 };
 
-// Next Race
+// ✅ Next Race
 export const useNextRace = () => {
-  const { data, error, isLoading } = useSWR<UpcomingRace>('/api/race/upcoming', fetcher);
+  const { data, error, isLoading } = useSWR<UpcomingRace>(
+    `${API_BASE}/race/upcoming`,
+    fetcher
+  );
+
   return { nextRace: data, isLoading, isError: !!error };
 };
 
-// Race Results
+// ✅ Race Results
 export const useRaceResults = () => {
-  const { data, error, isLoading } = useSWR<RaceResult>('/api/race/results', fetcher);
+  const { data, error, isLoading } = useSWR<RaceResult>(
+    `${API_BASE}/race/results`,
+    fetcher
+  );
+
   return { raceResults: data, isLoading, isError: !!error };
 };
