@@ -3,7 +3,7 @@ name: 🚀 Deploy FastAPI to EC2
 on:
   push:
     branches:
-      - main  # Change this if you want to deploy from a different branch
+      - production  # Change this if you want to deploy from a different branch
 
 jobs:
   deploy:
