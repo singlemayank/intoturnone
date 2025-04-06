@@ -1,27 +1,60 @@
-const drivers = [
-    { name: 'Max Verstappen', team: 'Red Bull', points: 231 },
-    { name: 'Charles Leclerc', team: 'Ferrari', points: 194 },
-    { name: 'Lando Norris', team: 'McLaren', points: 181 },
-    { name: 'Lewis Hamilton', team: 'Mercedes', points: 165 },
-    { name: 'Carlos Sainz', team: 'Ferrari', points: 160 },
-  ];
-  
-  export default function StandingsPreview() {
-    return (
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold mb-4 border-b border-red-600 pb-2">Top 5 Drivers</h2>
-        <ul className="space-y-3">
-          {drivers.map((driver, idx) => (
-            <li key={idx} className="flex justify-between items-center text-white border-b border-gray-700 pb-2">
-              <div>
-                <p className="font-semibold">{driver.name}</p>
-                <p className="text-sm text-gray-400">{driver.team}</p>
-              </div>
-              <p className="text-red-500 font-bold">{driver.points} pts</p>
-            </li>
-          ))}
-        </ul>
+'use client';
+import { useDriverStandings, useConstructorStandings } from '@/hooks/useF1Data';
+
+export default function StandingsPreview() {
+  const { drivers, isLoading: loadingDrivers } = useDriverStandings();
+  const { constructors, isLoading: loadingConstructors } = useConstructorStandings();
+
+  console.log('drivers', drivers);
+  console.log('constructors', constructors);
+
+  return (
+    <div className="grid md:grid-cols-2 gap-6">
+      {/* Drivers */}
+      <div className="bg-black/80 p-4 rounded-md border border-red-600">
+        <h2 className="text-red-500 font-orbitron text-lg mb-2">Top 5 Drivers</h2>
+        {loadingDrivers ? (
+          <p className="text-white">Loading...</p>
+        ) : (
+          <ul className="space-y-2">
+            {drivers?.map((driver) => (
+              <li
+                key={driver.driver}
+                className="flex justify-between text-white text-sm border-b border-gray-700 pb-1"
+              >
+                <span className="font-medium">
+                  {driver.position}. {driver.driver}
+                </span>
+                <span>{driver.points} pts</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    );
-  }
-  
+
+      {/* Constructors */}
+      <div className="bg-black/80 p-4 rounded-md border border-red-600">
+        <h2 className="text-red-500 font-orbitron text-lg mb-2">Top 5 Constructors</h2>
+        {loadingConstructors ? (
+          <p className="text-white">Loading...</p>
+        ) : (
+          <ul className="space-y-2">
+            {constructors?.map((constructor) => (
+              <li
+                key={constructor.name}
+                className="flex justify-between text-white text-sm border-b border-gray-700 pb-1"
+              >
+                <span className="font-medium">
+                  {constructor.position}. {constructor.name}
+                </span>
+                <span>{constructor.points} pts</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+

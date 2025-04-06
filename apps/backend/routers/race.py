@@ -5,7 +5,7 @@ from services.fastf1_service import get_race_results
 
 router = APIRouter()
 
-@router.get("/race/upcoming")
+@router.get("/upcoming")
 def upcoming_race():
     return get_next_race()
 

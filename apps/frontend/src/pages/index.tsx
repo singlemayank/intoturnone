@@ -55,9 +55,11 @@ export default function HomePage() {
 
         {/* Calendar & Standings */}
         <section className="py-16 px-6 flex flex-col lg:flex-row gap-10 max-w-7xl mx-auto">
+          {/*
           <div className="flex-1">
             <RaceCalendarWidget />
           </div>
+          */}
           <div className="flex-1">
             <StandingsPreview />
           </div>

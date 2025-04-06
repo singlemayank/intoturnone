@@ -1,12 +1,15 @@
 from fastapi import APIRouter
-from services.fastf1_service import get_top_5_drivers, get_top_5_constructors
+from services.jolpica_service import get_driver_standings, get_constructor_standings
+from datetime import datetime
 
 router = APIRouter()
 
 @router.get("/drivers")
 async def top_drivers():
-    return get_top_5_drivers()
+    current_year = datetime.utcnow().year
+    return get_driver_standings(current_year)
 
 @router.get("/constructors")
 async def top_constructors():
-    return get_top_5_constructors()
+    current_year = datetime.utcnow().year
+    return get_constructor_standings(current_year)

@@ -1,55 +1,41 @@
-import fastf1
-import requests
-import pandas as pd
-from datetime import datetime
 import os
+import fastf1
+import pandas as pd
+from fastf1 import get_event_schedule, get_session
+from datetime import datetime
+from fastf1.core import Laps
 
+# Ensure cache directory exists
 os.makedirs('/tmp/fastf1_cache', exist_ok=True)
 fastf1.Cache.enable_cache('/tmp/fastf1_cache')
 
-def get_top_5_drivers():
-    current_year = datetime.now().year
-    url = f"https://api.jolpi.ca/ergast/f1/{current_year}/driverStandings.json"
-    res = requests.get(url)
-    res.raise_for_status()
-    data = res.json()
-
-    standings = data["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]
-    top5 = [{
-        "position": driver["position"],
-        "driver": f"{driver['Driver']['givenName']} {driver['Driver']['familyName']}",
-        "points": driver["points"],
-        "wins": driver["wins"],
-        "constructor": driver["Constructors"][0]["name"]
-    } for driver in standings[:5]]
-
-    return top5
-
-
-def get_top_5_constructors():
-    current_year = datetime.now().year
-    url = f"https://api.jolpi.ca/ergast/f1/{current_year}/constructorStandings.json"
-    res = requests.get(url)
-    res.raise_for_status()
-    data = res.json()
-
-    standings = data["MRData"]["StandingsTable"]["StandingsLists"][0]["ConstructorStandings"]
-    top5 = [{
-        "position": constructor["position"],
-        "name": constructor["Constructor"]["name"],
-        "points": constructor["points"],
-        "wins": constructor["wins"]
-    } for constructor in standings[:5]]
-
-    return top5
-from fastf1 import get_event_schedule, get_session
-from datetime import datetime
+# Map nationalities to ISO 3166-1 alpha-2 country codes (for flags)
+NATIONALITY_FLAG_MAP = {
+    "British": "GB",
+    "German": "DE",
+    "Dutch": "NL",
+    "Spanish": "ES",
+    "Finnish": "FI",
+    "Mexican": "MX",
+    "Australian": "AU",
+    "Canadian": "CA",
+    "French": "FR",
+    "Japanese": "JP",
+    "Monegasque": "MC",
+    "Danish": "DK",
+    "Chinese": "CN",
+    "Thai": "TH",
+    "Italian": "IT",
+    "American": "US",
+    "Brazilian": "BR",
+    # Add more mappings if needed
+}
 
 def get_race_results():
     current_year = datetime.now().year
     schedule = get_event_schedule(current_year)
 
-    # FIX: Convert timezone-aware UTC now to naive for comparison
+    # Convert to naive datetime to avoid comparison issues
     now = pd.Timestamp.utcnow().tz_localize(None)
     past_races = schedule[schedule['EventDate'] < now]
 
@@ -57,24 +43,50 @@ def get_race_results():
         return {"message": "No completed races yet."}
 
     last_race = past_races.iloc[-1]
-    session = get_session(current_year, int(last_race["RoundNumber"]), "R")
+    round_number = int(last_race["RoundNumber"])
+    session = get_session(current_year, round_number, "R")
     session.load()
 
     results = []
+    laps = session.laps
+    fastest_lap = laps.pick_fastest()
+
     for drv in session.results.itertuples():
         results.append({
             "position": int(drv.Position),
             "driver_number": drv.DriverNumber,
             "full_name": f"{drv.FirstName} {drv.LastName}",
+            "abbreviation": drv.Abbreviation,
             "team": drv.TeamName,
             "time": str(drv.Time),
+            "points": drv.Points,
+            "nationality": drv.Nationality,
+            "flag": NATIONALITY_FLAG_MAP.get(drv.Nationality, "XX")
         })
 
-    winner = results[0] if results else {}
+    fastest_info = None
+    if fastest_lap is not None:
+        drv = fastest_lap["Driver"]
+        driver_row = session.get_driver_by_code(drv)
+        fastest_info = {
+            "full_name": f"{driver_row['FirstName']} {driver_row['LastName']}",
+            "abbreviation": drv,
+            "team": fastest_lap["Team"],
+            "lap_time": str(fastest_lap["LapTime"]),
+            "lap_number": int(fastest_lap["LapNumber"]),
+            "position": int(fastest_lap["Position"]),
+            "flag": NATIONALITY_FLAG_MAP.get(driver_row["Nationality"], "XX"),
+        }
 
     return {
         "race_name": last_race["EventName"],
         "date": str(last_race["EventDate"]),
-        "winner": winner,
-        "results": results
+        "round": round_number,
+        "location": {
+            "country": last_race["Country"],
+            "circuit": last_race["Location"]
+        },
+        "winner": results[0] if results else None,
+        "results": results,
+        "fastest_lap": fastest_info
     }
