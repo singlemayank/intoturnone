@@ -13,7 +13,7 @@ export default function AboutPage() {
         {/* Hero Image */}
         <div className="mb-8 rounded-2xl overflow-hidden shadow-lg">
           <Image
-            src="/images/about/hero-garage.jpg"
+            src="/images/about/hero-garage.png"
             alt="Formula 1 garage operations"
             width={1200}
             height={600}
@@ -32,7 +32,7 @@ export default function AboutPage() {
         {/* Image - telemetry */}
         <div className="mb-8 rounded-xl overflow-hidden shadow">
           <Image
-            src="/images/about/telemetry.jpg"
+            src="/images/about/telemetry.png"
             alt="Telemetry data visualization"
             width={1200}
             height={500}
@@ -60,7 +60,7 @@ export default function AboutPage() {
         {/* Image - celebration */}
         <div className="mb-10 rounded-xl overflow-hidden shadow">
           <Image
-            src="/images/about/podium-celebration.jpg"
+            src="/images/about/podium-celebration.png"
             alt="F1 podium celebration"
             width={1200}
             height={500}
