@@ -8,7 +8,7 @@ export default function AboutPage() {
         <title>About | IntoTurnOne</title>
       </Head>
       <main className="max-w-4xl mx-auto px-6 py-10">
-        <h1 className="text-4xl font-extrabold mb-6 text-white">👋 Welcome to IntoTurnOne</h1>
+        <h1 className="text-4xl font-extrabold mb-6 text-white"> Welcome to IntoTurnOne</h1>
 
         {/* Hero Image */}
         <div className="mb-8 rounded-2xl overflow-hidden shadow-lg">
@@ -22,7 +22,7 @@ export default function AboutPage() {
         </div>
 
         <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-          <strong>IntoTurnOne</strong> is an independent Formula 1 hub created by a lifelong fan and DevOps engineer who wanted more than just race results — a place where real-time data, strategy breakdowns, and F1 passion collide.
+          <strong>IntoTurnOne</strong> is an independent Formula 1 hub created by a lifelong fan and an engineer who wanted more than just race results — a place where real-time data, strategy breakdowns, and F1 passion collide.
         </p>
 
         <p className="text-lg text-gray-400 mb-6 leading-relaxed">
@@ -54,8 +54,7 @@ export default function AboutPage() {
         </p>
         <ul className="list-disc list-inside text-gray-300 space-y-1 mb-8">
           <li><code className="text-white">Next.js</code> for the frontend</li>
-          <li><code className="text-white">FastAPI</code> for the backend (with live data from FastF1 and Jolpica)</li>
-          <li>Hosted on <code className="text-white">Vercel</code> and <code className="text-white">AWS EC2</code></li>
+          <li><code className="text-white">FastAPI</code> for the backend</li>
         </ul>
 
         {/* Image - celebration */}
@@ -71,7 +70,7 @@ export default function AboutPage() {
 
         <h2 className="text-xl font-bold mb-2 text-white">🎯 Our Vision</h2>
         <p className="text-gray-400 mb-12">
-          This isn’t just another stats site. It’s a place to bring fans closer to the action, offer tools for true race analysis, and eventually become a home for diehard F1 geeks to share theories, breakdowns, and predictions.
+          This isn&rsquo;t just another stats site. It&rsquo;s a place to bring fans closer to the action, offer tools for true race analysis, and eventually become a home for diehard F1 geeks to share theories, breakdowns, and predictions.
         </p>
 
         <p className="text-sm text-gray-600 italic">
