@@ -1,7 +1,7 @@
 #main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import standings, race
+from routers import standings, race, news
 
 app = FastAPI(
     title="IntoTurnOne F1 API",
@@ -30,3 +30,4 @@ app.add_middleware(
 # Route registration
 app.include_router(standings.router, prefix="/standings", tags=["Standings"])
 app.include_router(race.router, prefix="/race", tags=["Race Info"])
+app.include_router(news.router, tags=["News"])
