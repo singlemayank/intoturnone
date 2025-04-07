@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '@/components/Header';
 import NextUpBanner from '@/components/NextUpBanner';
 import FeaturedCarousel from '@/components/FeaturedCarousel';
 import TrendingSection from '@/components/TrendingSection';
@@ -20,7 +19,6 @@ export default function HomePage() {
         <meta property="og:image" content="/og-banner.jpg" />
       </Head>
 
-      <Header />
       <NextUpBanner />
 
       <main className="min-h-screen bg-black text-white font-sans">
