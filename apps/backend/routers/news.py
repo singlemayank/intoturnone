@@ -5,10 +5,10 @@ router = APIRouter()
 
 @router.get("/news")
 def get_latest_news():
-    feed_url = "https://www.planetf1.com/feed/"
+    feed_url = "https://www.racefans.net/feed/"
     feed = feedparser.parse(feed_url)
 
-    if not feed.entries:
+    if not feed or not hasattr(feed, "entries") or not feed.entries:
         return {"status": "error", "message": "No news found"}
 
     return {
@@ -17,8 +17,8 @@ def get_latest_news():
             {
                 "title": entry.title,
                 "link": entry.link,
-                "published": entry.published if "published" in entry else None,
-                "summary": entry.summary if "summary" in entry else "",
+                "published": entry.get("published", ""),
+                "summary": entry.get("summary", ""),
             }
             for entry in feed.entries[:5]
         ]
