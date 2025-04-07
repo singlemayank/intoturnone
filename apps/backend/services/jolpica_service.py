@@ -3,21 +3,27 @@ from datetime import datetime
 
 BASE_URL = "https://api.jolpi.ca"
 
-def get_driver_standings(year: int):
+def get_driver_standings(year: int, limit: int = None):
     url = f"{BASE_URL}/ergast/f1/{year}/driverStandings.json"
     res = requests.get(url)
     res.raise_for_status()
     data = res.json()
     standings = data['MRData']['StandingsTable']['StandingsLists'][0]['DriverStandings']
-    return standings[:5]
+    
+    if limit:
+        return standings[:limit]
+    return standings
 
-def get_constructor_standings(year: int):
+def get_constructor_standings(year: int, limit: int = None):
     url = f"{BASE_URL}/ergast/f1/{year}/constructorStandings.json"
     res = requests.get(url)
     res.raise_for_status()
     data = res.json()
     standings = data['MRData']['StandingsTable']['StandingsLists'][0]['ConstructorStandings']
-    return standings[:5]
+    
+    if limit:
+        return standings[:limit]
+    return standings
 
 def get_next_race():
     current_year = datetime.utcnow().year
