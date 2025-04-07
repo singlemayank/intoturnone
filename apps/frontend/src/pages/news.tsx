@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useTrendingNews } from '@/hooks/useTrendingNews';
+import type { NewsItem } from '@/types/news';
 
 export default function NewsPage() {
   const { data, error, isLoading } = useTrendingNews();
@@ -16,7 +17,7 @@ export default function NewsPage() {
         {error && <p>Failed to load news. Try again later.</p>}
 
         <ul className="space-y-4">
-          {data?.items?.map((item: any) => (
+          {data?.items?.map((item: NewsItem) => (
             <li key={item.link}>
               <a
                 href={item.link}

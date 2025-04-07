@@ -1,4 +1,5 @@
 import { useTrendingNews } from '@/hooks/useTrendingNews';
+import type { NewsItem } from '@/types/news';
 
 const TrendingSection = () => {
   const { data, error, isLoading } = useTrendingNews();
@@ -11,7 +12,7 @@ const TrendingSection = () => {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-2">🔥 Trending Now</h2>
       <ul className="space-y-2">
-        {data.items.slice(0, 5).map((item: any) => (
+        {data.items.slice(0, 5).map((item: NewsItem) => (
           <li key={item.link}>
             <a
               href={item.link}
