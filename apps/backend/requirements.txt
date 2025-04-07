@@ -3,3 +3,4 @@ uvicorn
 fastf1
 pandas
 requests
+feedparser
