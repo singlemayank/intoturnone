@@ -57,7 +57,7 @@ const fetcher = async (url: string) => {
 // ✅ Drivers
 export const useDriverStandings = () => {
   const { data, error, isLoading } = useSWR<DriverStandingRaw[]>(
-    `${API_BASE}/standings/drivers`,
+    `${API_BASE}/standings/drivers/full`,
     fetcher
   );
 
@@ -77,7 +77,7 @@ export const useDriverStandings = () => {
 // ✅ Constructors
 export const useConstructorStandings = () => {
   const { data, error, isLoading } = useSWR<ConstructorStandingRaw[]>(
-    `${API_BASE}/standings/constructors`,
+    `${API_BASE}/standings/constructors/full`,
     fetcher
   );
 
