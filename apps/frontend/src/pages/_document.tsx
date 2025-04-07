@@ -10,6 +10,7 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+        <link rel="icon" type="image/png" href="/favicon.ico.png" />
           {/* ✅ Google Fonts moved here to avoid Next.js warning */}
           <link
             href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap"
