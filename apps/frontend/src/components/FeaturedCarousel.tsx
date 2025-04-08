@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 const featuredPosts = [
   {
-    title: 'Undercut vs Overcut: Which Reigns Supreme in 2025?',
+    title: 'Once in a Generation: Verstappen’s Suzuka Symphony',
     image: '/20250404_0144_Thrilling Formula 1 Apex_simple_compose_01jqymmj3xfj5by8y0kc2wyp6d.png',
-    link: '/blog/undercut-vs-overcut-analysis',
+    link: '/blog/verstappen-suzuka-dominance',
   },
   {
     title: 'Garage Confidential: What Ferrari Was Hiding in Suzuka',
