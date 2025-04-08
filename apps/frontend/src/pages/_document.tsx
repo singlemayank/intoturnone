@@ -16,6 +16,14 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap"
             rel="stylesheet"
           />
+
+          {/* ✅ Google AdSense */}
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8895269533677060"
+            crossOrigin="anonymous"
+          ></script>
+          
         </Head>
         <body>
           <Main />
