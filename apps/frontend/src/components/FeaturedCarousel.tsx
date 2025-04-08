@@ -8,14 +8,14 @@ const featuredPosts = [
     link: '/blog/verstappen-suzuka-dominance',
   },
   {
-    title: 'Garage Confidential: What Ferrari Was Hiding in Suzuka',
+    title: 'Garage Confidential: McLarens Strategic Gamble at Suzuka',
     image: '/20250404_2343_F1 Garage Operations_simple_compose_01jr1045r4f3g8b7tm7ck8tpsa.png',
-    link: '/blog/ferrari-suzuka-strategy',
+    link: '/blog/mclaren-japan-pit-strategy',
   },
   {
-    title: 'How Rain Changed Everything in Japan',
-    image: '/20250404_2331_Cinematic F1 Wet Turn_simple_compose_01jr0zdsgxe3nrvxc8w7nvtgdx.png',
-    link: '/blog/japan-wet-race-analysis',
+    title: 'Monday Report: Suzuka GP',
+    image: '/20250409_0025_Cherry Blossoms Over Suzuka_simple_compose_01jrbc47e7etjtxng119ryv19m.png',
+    link: '/blog/Monday-report-suzuka',
   },
 ];
 
