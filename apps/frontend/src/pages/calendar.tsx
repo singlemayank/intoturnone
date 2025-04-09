@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import useSWR from 'swr';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { flagMap } from "@/utils/flagMap";
 
 interface Race {
   round: number;
@@ -31,62 +32,103 @@ export default function CalendarPage() {
     return showUpcoming ? raceDate >= now : raceDate < now;
   });
 
+  // Toggle underline refs
+  const upcomingRef = useRef<HTMLButtonElement>(null);
+  const pastRef = useRef<HTMLButtonElement>(null);
+  const underlineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const activeButton = showUpcoming ? upcomingRef.current : pastRef.current;
+    const underline = underlineRef.current;
+
+    if (activeButton && underline) {
+      underline.style.width = `${activeButton.offsetWidth}px`;
+      underline.style.transform = `translateX(${activeButton.offsetLeft}px)`;
+    }
+  }, [showUpcoming]);
+
   return (
     <>
       <Head>
         <title>F1 2025 Race Calendar | IntoTurnOne</title>
       </Head>
+
       <main className="p-4 max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">🗓️ 2025 Formula 1 Calendar</h1>
 
-        <div className="mb-6">
-          <button
-            onClick={() => setShowUpcoming(true)}
-            className={`mr-2 px-4 py-2 rounded-lg ${
-              showUpcoming ? 'bg-black text-white' : 'bg-gray-200'
-            }`}
-          >
-            Upcoming
-          </button>
-          <button
-            onClick={() => setShowUpcoming(false)}
-            className={`px-4 py-2 rounded-lg ${
-              !showUpcoming ? 'bg-black text-white' : 'bg-gray-200'
-            }`}
-          >
-            Past
-          </button>
+        {/* Toggle Section with animated underline */}
+        <div className="relative mb-6 w-fit">
+          <div className="flex space-x-4">
+            <button
+              ref={upcomingRef}
+              onClick={() => setShowUpcoming(true)}
+              className={`pb-2 transition-colors font-medium ${
+                showUpcoming
+                  ? 'text-white font-bold'
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              Upcoming
+            </button>
+            <button
+              ref={pastRef}
+              onClick={() => setShowUpcoming(false)}
+              className={`pb-2 transition-colors font-medium ${
+                !showUpcoming
+                  ? 'text-white font-bold'
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              Past
+            </button>
+          </div>
+
+          {/* Sliding underline */}
+          <div
+            ref={underlineRef}
+            className="absolute bottom-0 h-[2px] bg-white transition-all duration-300"
+          />
         </div>
 
+        {/* Loading / Error / No Results */}
         {isLoading && <p>Loading races...</p>}
         {error && <p>Failed to load schedule.</p>}
-
         {filteredRaces?.length === 0 && (
           <p className="text-gray-600">No races to show here.</p>
         )}
 
+        {/* Race Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRaces?.map((race) => {
             const dateObj = new Date(race.date);
             const day = dateObj.getDate();
             const month = dateObj.toLocaleString('default', { month: 'short' });
 
+            const flagUrl = flagMap[race.country] ?? "/flag/wavy/default.png";
+
             return (
               <div
                 key={race.round}
-                className="rounded-xl border shadow-md hover:shadow-lg transition bg-white p-5"
+                className="relative rounded-xl overflow-hidden shadow-md transform transition duration-300 hover:scale-[1.03] cursor-pointer"
+                style={{
+                  backgroundImage: `url(${flagUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-gray-500 font-medium">
-                    Round {race.round}
+                <div className="absolute inset-0 bg-black/60 z-0" />
+                <div className="relative z-10 p-5 text-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm font-medium">Round {race.round}</div>
+                    <div className="text-right">
+                      <div className="text-xl font-bold leading-none">{day}</div>
+                      <div className="text-xs uppercase">{month}</div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xl font-bold leading-none">{day}</div>
-                    <div className="text-xs text-gray-400 uppercase">{month}</div>
-                  </div>
+                  <h2 className="text-lg font-semibold">{race.name}</h2>
+                  <p className="text-sm">{race.location}, {race.country}</p>
                 </div>
-                <h2 className="text-lg font-semibold">{race.name}</h2>
-                <p className="text-sm text-gray-600">{race.location}, {race.country}</p>
               </div>
             );
           })}
