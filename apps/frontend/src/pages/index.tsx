@@ -7,6 +7,7 @@ import TrendingSection from '@/components/TrendingSection';
 import StandingsPreview from '@/components/StandingsPreview';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import RaceResults from '@/components/RaceResults';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function HomePage() {
   return (
@@ -40,7 +41,7 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
-
+        <SpeedInsights />
         {/* Featured Carousel */}
         <section id="featured" className="py-16 px-6 bg-black max-w-7xl mx-auto">
           <FeaturedCarousel />
