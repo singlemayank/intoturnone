@@ -24,6 +24,13 @@ class MyDocument extends Document {
             crossOrigin="anonymous"
           ></script>
           
+         
+          {/* Default favicon for dark mode */}
+          <link rel="icon" href="/favicon-white.png" media="(prefers-color-scheme: dark)" />
+          
+          {/* Override for light mode */}
+          <link rel="icon" href="/favicon-black.png" media="(prefers-color-scheme: light)" />
+        
         </Head>
         <body>
           <Main />

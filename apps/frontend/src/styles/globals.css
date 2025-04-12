@@ -1,26 +1,28 @@
 @import "tailwindcss";
 
+/* Theme tokens (used by header only) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --heading: #0f172a;
+  --text-muted: #4b5563;
+  --accent: #dc2626;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --heading: #f8fafc;
+    --text-muted: #9ca3af;
+    --accent: #f87171;
   }
 }
 
+/* Global base styles */
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #000; /* hardcoded site-wide black background */
+  color: #fff;            /* hardcoded white text */
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
