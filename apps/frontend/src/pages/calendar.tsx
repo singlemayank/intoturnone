@@ -117,7 +117,7 @@ export default function CalendarPage() {
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                <div className="absolute inset-0 bg-black/60 z-0" />
+                <div className="absolute inset-0 bg-black/40 z-0" />
                 <div className="relative z-10 p-5 text-white">
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-sm font-medium">Round {race.round}</div>

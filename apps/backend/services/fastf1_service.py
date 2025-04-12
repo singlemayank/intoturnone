@@ -4,11 +4,14 @@ import fastf1
 import pandas as pd
 from fastf1 import get_event_schedule, get_session
 from datetime import datetime
+from pathlib import Path
 import math
 
 # Ensure cache directory exists
-os.makedirs('/home/ubuntu/.fastf1_cache', exist_ok=True)
-fastf1.Cache.enable_cache('/home/ubuntu/.fastf1_cache')
+# Cross-platform default FastF1 cache path (in user's home directory)
+cache_path = Path.home() / ".fastf1_cache"
+os.makedirs(cache_path, exist_ok=True)
+fastf1.Cache.enable_cache(str(cache_path))
 
 NATIONALITY_FLAG_MAP = {
     "British": "GB", "German": "DE", "Dutch": "NL", "Spanish": "ES", "Finnish": "FI",

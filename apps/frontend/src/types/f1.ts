@@ -33,6 +33,7 @@ export interface DriverStanding {
   }
   
   export interface RaceResult {
+    location: any;
     race_name: string;
     date: string;
     winner: {
@@ -42,6 +43,9 @@ export interface DriverStanding {
       position: number;
     };
     results: {
+      Driver: any;
+      Constructor: any;
+      Time: any;
       full_name: string;
       team: string;
       time: string;

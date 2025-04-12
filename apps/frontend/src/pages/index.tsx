@@ -6,8 +6,8 @@ import FeaturedCarousel from '@/components/FeaturedCarousel';
 import TrendingSection from '@/components/TrendingSection';
 import StandingsPreview from '@/components/StandingsPreview';
 import NewsletterSignup from '@/components/NewsletterSignup';
-import RaceResults from '@/components/RaceResults';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import RaceResultsSection from '@/components/RaceResultsSection';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function HomePage() {
   return (
@@ -41,15 +41,18 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
+
         <SpeedInsights />
+
         {/* Featured Carousel */}
         <section id="featured" className="py-16 px-6 bg-black max-w-7xl mx-auto">
           <FeaturedCarousel />
         </section>
 
-        {/* Trending Now Section */}
-        <section id="latest" className="py-16 px-6 bg-gray-950 max-w-7xl mx-auto">
-          <TrendingSection />
+         {/* 🏁 Podium Section */}
+        
+         <section className="py-16 px-6 bg-black max-w-7xl mx-auto">
+          <RaceResultsSection />
         </section>
 
         {/* Standings */}
@@ -59,17 +62,15 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Race Results */}
-        <section className="py-16 px-6 max-w-7xl mx-auto">
-          <RaceResults />
+         {/* Trending Now Section */}
+         <section id="latest" className="py-16 px-6 bg-gray-950 max-w-7xl mx-auto">
+          <TrendingSection />
         </section>
-
+      
         {/* Newsletter */}
         <section className="py-12 px-6 bg-gray-900">
           <NewsletterSignup />
         </section>
-
-
       </main>
     </>
   );
