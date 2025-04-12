@@ -81,8 +81,8 @@ export default function RaceResultsSection() {
             driver.position === 3 ? 'md:order-3' : '';
 
           const isFirst = driver.position === 1;
-          const isSecond = driver.position === 2;
-          const isThird = driver.position === 3;
+          /* const isSecond = driver.position === 2;
+          const isThird = driver.position === 3; */
 
           const teamColor = teamColorMap[driver.team] || '#333';
           const initials = driver.full_name || '??';
