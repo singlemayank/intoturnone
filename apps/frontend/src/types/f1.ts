@@ -19,6 +19,8 @@ export interface Session {
 }
 
 export interface UpcomingRace {
+  start_time_utc: any;
+  country: string;
   FirstPractice?: Session;
   SecondPractice?: Session;
   Qualifying?: Session;
