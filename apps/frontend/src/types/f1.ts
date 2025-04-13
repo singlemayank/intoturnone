@@ -19,7 +19,7 @@ export interface Session {
 }
 
 export interface UpcomingRace {
-  start_time_utc: any;
+  start_time_utc: string; // ✅ No more `any`
   country: string;
   FirstPractice?: Session;
   SecondPractice?: Session;
