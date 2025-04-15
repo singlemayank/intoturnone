@@ -3,6 +3,7 @@ import os
 import fastf1
 import pandas as pd
 from fastf1 import get_event_schedule, get_session
+from functools import lru_cache
 from datetime import datetime
 from pathlib import Path
 import math
@@ -84,4 +85,27 @@ def get_latest_race_results():
             continue
 
     return {"message": "No completed race results available yet."}
+
+@lru_cache(maxsize=100)
+def get_race_podium_by_round(year: int, round_number: int):
+    try:
+        session = get_session(year, round_number, "R")  # ✅ No need for Event
+        session.load()
+
+        if session.results is None or session.results.empty:
+            print(f"⚠️ No results for round {round_number}")
+            return None
+
+        df = session.results
+        top3 = df.sort_values("Position")["FullName"].head(3).tolist()
+
+        if len(top3) < 3:
+            print(f"⚠️ Incomplete podium for round {round_number}")
+            return None
+
+        return {"top3": top3}
+    
+    except Exception as e:
+        print(f"⚠️ Failed to load race {round_number}: {e}")
+        return None
     

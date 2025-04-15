@@ -1,0 +1,9 @@
+{
+    "crons": [
+      {
+        "path": "/api/cron/warm-podiums",
+        "schedule": "0 0 * * 1"
+      }
+    ]
+  }
+  

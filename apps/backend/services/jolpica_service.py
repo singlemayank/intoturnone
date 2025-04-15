@@ -37,14 +37,16 @@ def get_next_race():
         now = datetime.utcnow().replace(tzinfo=timezone.utc)
 
         for race in races:
-            # Use both date and time if available
             date_str = race.get("date")
             time_str = race.get("time", "00:00:00Z").replace("Z", "+00:00")
             race_start = datetime.fromisoformat(f"{date_str}T{time_str}")
 
+            round_number = int(race.get("round", 0))  # ✅ Ensure this exists
+
             # 🟡 If race is currently ongoing (within 3 hours of start)
             if race_start <= now <= race_start + timedelta(hours=3):
                 return {
+                    "round": round_number,  # ✅ Added
                     "status": "in_progress",
                     "race_name": race["raceName"],
                     "country": race["Circuit"]["Location"]["country"],
@@ -57,6 +59,7 @@ def get_next_race():
             if race_start > now:
                 delta = race_start - now
                 return {
+                    "round": round_number,  # ✅ Added
                     "status": "upcoming",
                     "race_name": race["raceName"],
                     "country": race["Circuit"]["Location"]["country"],
