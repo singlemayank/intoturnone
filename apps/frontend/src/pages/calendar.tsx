@@ -25,6 +25,8 @@
     status: "in_progress" | "upcoming";
   }
 
+  
+
   export default function CalendarPage() {
     const { data: schedule, error, isLoading } = useSWR<RaceSchedule>(
       '/race/schedule',
@@ -35,15 +37,16 @@
       '/race/upcoming',
       apiFetcher
     );
-
-    const { data: poleMap } = useSWR<Record<string, { top3: string[] }>>(
+    
+    type RaceResults = Record<string, { top3: string[] }>;
+    const { data: resultsMap } = useSWR<RaceResults>(
       '/race/results/all',
       apiFetcher
     );
 
     const [showUpcoming, setShowUpcoming] = useState(true);
     const now = new Date();
-    console.log("🕒 NOW:", now.toISOString());
+    //console.log("🕒 NOW:", now.toISOString());
 
     const sortedRaces = [...(schedule?.races ?? [])].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -128,10 +131,10 @@
           {error && <p>Failed to load schedule.</p>}
           {visibleRaces.length === 0 && <p>No races to show.</p>}
 
-          {poleMap && (
+          {resultsMap && (
             <details className="mb-4 bg-zinc-900 p-4 rounded text-sm">
               <summary className="cursor-pointer">Debug: /race/results/all</summary>
-              <pre>{JSON.stringify(poleMap, null, 2)}</pre>
+              <pre>{JSON.stringify(resultsMap, null, 2)}</pre>
             </details>
           )}
 
@@ -143,13 +146,13 @@
               
               const isInProgress = nowUtc >= raceStart && nowUtc <= raceEnd;
               const isPast = nowUtc > raceEnd;
-              const roundKey = String(race.round);
+              //const roundKey = String(race.round);
 
               const flagUrl = flagMap[race.country] ?? "/flag/wavy/default.png";
               const isHighlighted = race.round === highlightedRace;
 
               const topThree = isPast
-                ? poleMap?.[String(race.round)]?.top3 ?? ['TBD', 'TBD', 'TBD']
+                ? resultsMap?.[String(race.round)]?.top3 ?? ['TBD', 'TBD', 'TBD']
                 : ['TBD', 'TBD', 'TBD'];
 
 
