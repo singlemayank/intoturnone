@@ -20,13 +20,9 @@ export class APIError extends Error {
  *
  * @template T - The expected response type.
  */
-export const apiFetcher = async <T = unknown>(path: string): Promise<T> => {
-  const response = await fetch(`${API_BASE}${path}`);
+export const apiFetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+    return res.json();
+  });
 
-  if (!response.ok) {
-    const info = await response.json().catch(() => null);
-    throw new APIError(`API error: ${response.status}`, info, response.status);
-  }
-
-  return response.json();
-};

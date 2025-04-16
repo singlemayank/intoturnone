@@ -39,9 +39,10 @@ export default function CalendarPage() {
   );
 
   const { data: resultsMap } = useSWR<RaceResults>(
-    '/race/results/all?secret=abc123',
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/race/results/all?secret=abc123`,
     apiFetcher
   );
+  
 
   const [showUpcoming, setShowUpcoming] = useState(true);
   const now = new Date();
