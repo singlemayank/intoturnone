@@ -20,11 +20,17 @@ async def get_all_race_podiums():
     for round_number in range(1, 25):
         try:
             data = get_race_podium_by_round(current_year, round_number)
-            if data and "top3" in data and len(data["top3"]) == 3:
-                results_by_round[str(round_number)] = data
+
+            # Stop once we hit a race with no data (future)
+            if not data or "top3" not in data or len(data["top3"]) < 3:
+                print(f"🛑 Stopping at round {round_number} — no result data")
+                break
+
+            results_by_round[round_number] = data
         except Exception as ex:
-            print(f"Skipping round {round_number}: {ex}")
-            continue
+            print(f"⚠️ Skipping round {round_number}: {ex}")
+            break  # Assume future rounds also have no data
+
 
     r.setex(key, 300, json.dumps(results_by_round))  # cache for 5 minutes
     return results_by_round

@@ -49,13 +49,6 @@ export default function AboutPage() {
         </ul>
 
         <h2 className="text-2xl font-bold mb-4 text-white">Built for F1 Nerds</h2>
-        <p className="text-gray-400 mb-6">
-          IntoTurnOne is built with:
-        </p>
-        <ul className="list-disc list-inside text-gray-300 space-y-1 mb-8">
-          <li><code className="text-white">Next.js</code> for the frontend</li>
-          <li><code className="text-white">Python</code>  for the backend</li>
-        </ul>
 
         {/* Image - celebration */}
         <div className="mb-10 rounded-xl overflow-hidden shadow">

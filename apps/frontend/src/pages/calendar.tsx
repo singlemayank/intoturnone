@@ -28,21 +28,22 @@ interface UpcomingRace {
 type RaceResults = Record<string, { top3: string[] }>;
 
 export default function CalendarPage() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+
   const { data: schedule, error, isLoading } = useSWR<RaceSchedule>(
-    '/race/schedule',
+    `${API_BASE}/race/schedule`,
     apiFetcher
   );
 
   const { data: nextRaceData } = useSWR<UpcomingRace>(
-    '/race/upcoming',
+    `${API_BASE}/race/upcoming`,
     apiFetcher
   );
 
   const { data: resultsMap } = useSWR<RaceResults>(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/race/results/all?secret=abc123`,
+    `${API_BASE}/race/results/all?secret=abc123`,
     apiFetcher
   );
-  
 
   const [showUpcoming, setShowUpcoming] = useState(true);
   const now = new Date();
@@ -53,20 +54,10 @@ export default function CalendarPage() {
 
   const highlightedRace = nextRaceData?.round ?? null;
 
-  // Filter based on time
   const filteredRaces = sortedRaces.filter((race) => {
     const raceStart = new Date(race.date);
     const raceEnd = new Date(raceStart.getTime() + 3 * 60 * 60 * 1000);
     const show = showUpcoming ? now <= raceEnd : now > raceEnd;
-
-    console.log(`🏁 ROUND ${race.round}`, {
-      name: race.name,
-      raceStart: raceStart.toISOString(),
-      raceEnd: raceEnd.toISOString(),
-      now: now.toISOString(),
-      show
-    });
-
     return show;
   });
 
@@ -95,7 +86,6 @@ export default function CalendarPage() {
       <main className="p-4 max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">🗓️ 2025 Formula 1 Calendar</h1>
 
-        {/* Toggle */}
         <div className="relative mb-6 w-fit">
           <div className="flex space-x-4">
             <button
@@ -127,29 +117,19 @@ export default function CalendarPage() {
         {error && <p>Failed to load schedule.</p>}
         {visibleRaces.length === 0 && <p>No races to show.</p>}
 
-        {resultsMap && (
-          <details className="mb-4 bg-zinc-900 p-4 rounded text-sm">
-            <summary className="cursor-pointer">Debug: /race/results/all</summary>
-            <pre>{JSON.stringify(resultsMap, null, 2)}</pre>
-          </details>
-        )}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleRaces.map((race) => {
             const raceStart = new Date(race.date);
             const raceEnd = new Date(raceStart.getTime() + 3 * 60 * 60 * 1000);
             const nowUtc = new Date();
 
-            const roundKey = String(race.round);
-            const podium = resultsMap?.[roundKey]?.top3;
-            const isOfficial = podium && podium.length === 3;
-
-            const topThree = isOfficial ? podium : ['TBD', 'TBD', 'TBD'];
+            const podium = resultsMap?.[race.round]?.top3 ?? resultsMap?.[String(race.round)]?.top3;
+            const topThree = podium?.length === 3 ? podium : ['TBD', 'TBD', 'TBD'];
 
             const isInProgress = nowUtc >= raceStart && nowUtc <= raceEnd;
-            const isPast = isOfficial || nowUtc > raceEnd;
+            const isPast = topThree[0] !== 'TBD' || nowUtc > raceEnd;
 
-            const statusLabel = isOfficial
+            const statusLabel = topThree[0] !== 'TBD'
               ? 'Completed'
               : isInProgress
               ? 'In Progress'
@@ -157,12 +137,6 @@ export default function CalendarPage() {
 
             const flagUrl = flagMap[race.country] ?? "/flag/wavy/default.png";
             const isHighlighted = race.round === highlightedRace;
-
-            console.log(`🎯 Round ${roundKey}`, {
-              isPast,
-              topThree,
-              fromResults: resultsMap?.[roundKey]
-            });
 
             return (
               <div
