@@ -53,16 +53,15 @@ def race_results():
 
 @router.get("/results/all", tags=["Race Info"])
 def get_all_results(request: Request):
-    secret = request.query_params.get("secret")
-    if secret != "abc123":
-        raise HTTPException(status_code=403, detail="Unauthorized")
-
     key = "race:results:all"
-    cached = r.get(key)
-    if cached:
-        return json.loads(cached)
 
-    from services.fastf1_service import get_race_podium_by_round
+    # ✅ Try Redis first
+    try:
+        cached = r.get(key)
+        if cached:
+            return json.loads(cached)
+    except Exception as e:
+        print(f"⚠️ Redis read failed: {e}")
 
     current_year = datetime.utcnow().year
     results_by_round = {}
@@ -76,13 +75,27 @@ def get_all_results(request: Request):
             print(f"⚠️ Skipping round {round_number}: {ex}")
             continue
 
+    # ✅ Only set cache if we got valid data
     if results_by_round:
-        r.setex(key, 86400, json.dumps(results_by_round))
-        with open("data/raceResults.json", "w") as f:
-            json.dump(results_by_round, f, indent=2)
+        try:
+            r.setex(key, 86400, json.dumps(results_by_round))
+        except Exception as e:
+            print(f"⚠️ Redis write failed: {e}")
+
+        try:
+            with open("data/raceResults.json", "w") as f:
+                json.dump(results_by_round, f, indent=2)
+        except Exception as e:
+            print(f"⚠️ File write failed: {e}")
+
         return results_by_round
 
-    return {}
+    print("⚠️ No valid results found. Returning fallback.")
+    return {
+        "results": [],
+        "race_name": "Unavailable",
+        "location": {"circuit": "?", "country": "?"}
+    }
 
 
 @router.get("/schedule", tags=["Race Info"])
