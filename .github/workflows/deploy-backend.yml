@@ -24,12 +24,37 @@ jobs:
         run: |
           rsync -avz --delete ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/intoturnone/backend
 
-      - name: ⚙️ Install requirements & Restart service
+      - name: ⚙️ Install requirements & restart service
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
             cd /home/ec2-user/intoturnone/backend
-            source venv/bin/activate || python3 -m venv venv && source venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
-            sudo systemctl restart intoturnone
+
+            # Ensure virtual environment exists
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+
+            source venv/bin/activate
+
+            # Install dependencies
+            if [ -f "requirements.txt" ]; then
+              pip install --upgrade pip
+              pip install -r requirements.txt
+            else
+              echo "❌ requirements.txt not found!"
+              exit 1
+            fi
+
+            # Restart systemd service
+            sudo systemctl restart intoturnone.service
+
+            # Confirm status
+            if sudo systemctl is-active --quiet intoturnone.service; then
+              echo "✅ intoturnone.service is running"
+            else
+              echo "❌ intoturnone.service failed to start"
+              sudo journalctl -xeu intoturnone.service | tail -20
+              exit 1
+            fi
           EOF
