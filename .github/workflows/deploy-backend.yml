@@ -22,7 +22,7 @@ jobs:
 
       - name: 📦 Upload code to EC2
         run: |
-          rsync -avz --delete ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/intoturnone/backend
+          rsync -avz --delete ./apps/backend/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/intoturnone/backend
 
       - name: ⚙️ Install requirements & restart service
         run: |
