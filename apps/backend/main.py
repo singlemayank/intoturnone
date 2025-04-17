@@ -2,6 +2,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import standings, race, news, race_results
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(
     title="IntoTurnOne F1 API",
