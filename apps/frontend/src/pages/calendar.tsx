@@ -127,7 +127,6 @@ export default function CalendarPage() {
             const topThree = podium?.length === 3 ? podium : ['TBD', 'TBD', 'TBD'];
 
             const isInProgress = nowUtc >= raceStart && nowUtc <= raceEnd;
-            const isPast = topThree[0] !== 'TBD' || nowUtc > raceEnd;
 
             const statusLabel = topThree[0] !== 'TBD'
               ? 'Completed'
