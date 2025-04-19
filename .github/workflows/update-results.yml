@@ -1,0 +1,12 @@
+name: Refresh Race Results
+
+on:
+  schedule:
+    - cron: '0 9 * * MON' # every Monday 9 AM UTC
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit refresh API
+        run: curl -s https://api.intoturnone.com/race/results/all?refresh=true

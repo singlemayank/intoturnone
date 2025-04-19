@@ -1,11 +1,10 @@
-# race.py
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request
 from datetime import datetime
 import requests
 import json
 import os
 from services.jolpica_service import get_next_race
-from services.fastf1_service import get_latest_race_results
+from services.fastf1_service import get_latest_race_results, get_race_results_by_round
 from utils.redis_client import r
 
 router = APIRouter()
@@ -34,68 +33,78 @@ def race_results():
 
     round_number = data.get("round")
     top3 = [driver["full_name"] for driver in data["results"] if driver.get("position") in [1, 2, 3]]
+
     if len(top3) == 3 and round_number:
         path = "data/raceResults.json"
         os.makedirs(os.path.dirname(path), exist_ok=True)
+
         try:
             with open(path, "r") as f:
                 results_data = json.load(f)
         except Exception:
             results_data = {}
+
         results_data[str(round_number)] = {"top3": top3}
+
         with open(path, "w") as f:
             json.dump(results_data, f, indent=2)
+
+        # Cache the complete podiums for calendar
+        r.setex("race:podiums:all", 86400, json.dumps(results_data))
+
         # Invalidate related cache keys
         r.delete("race:results:all")
         r.delete("race:upcoming")
+
     r.setex(key, 300, json.dumps(data))
     return data
 
 @router.get("/results/all", tags=["Race Info"])
-def get_all_results(request: Request):
+def get_all_results(request: Request, refresh: bool = False):
     key = "race:results:all"
 
-    # ✅ Try Redis first
-    try:
-        cached = r.get(key)
-        if cached:
-            return json.loads(cached)
-    except Exception as e:
-        print(f"⚠️ Redis read failed: {e}")
+    if not refresh:
+        # ✅ FIRST: Try reading from file
+        try:
+            with open("data/raceResults.json", "r") as f:
+                data = json.load(f)
+                # Optional: update Redis cache with fresh file
+                r.setex(key, 86400, json.dumps(data))
+                return data
+        except Exception as e:
+            print(f"⚠️ File read failed: {e}")
 
+        # 🔄 SECOND: fallback to Redis only if file missing
+        try:
+            cached = r.get(key)
+            if cached:
+                return json.loads(cached)
+        except Exception as e:
+            print(f"⚠️ Redis read failed: {e}")
+
+    # 🛠 If refresh is requested or both caches are missing, regenerate
     current_year = datetime.utcnow().year
     results_by_round = {}
 
     for round_number in range(1, 25):
-        try:
-            data = get_race_podium_by_round(current_year, round_number)
-            if data and "top3" in data and len(data["top3"]) == 3:
-                results_by_round[str(round_number)] = data
-        except Exception as ex:
-            print(f"⚠️ Skipping round {round_number}: {ex}")
-            continue
+        data = get_race_results_by_round(current_year, round_number)
+        if data and "results" in data:
+            results_by_round[str(round_number)] = {
+                "top3": data["top3"],
+                "results": data["results"]
+            }
+        else:
+            break
 
-    # ✅ Only set cache if we got valid data
-    if results_by_round:
-        try:
-            r.setex(key, 86400, json.dumps(results_by_round))
-        except Exception as e:
-            print(f"⚠️ Redis write failed: {e}")
+    results_by_round["last_updated"] = datetime.utcnow().isoformat()
 
-        try:
-            with open("data/raceResults.json", "w") as f:
-                json.dump(results_by_round, f, indent=2)
-        except Exception as e:
-            print(f"⚠️ File write failed: {e}")
+    # Save to file + Redis
+    os.makedirs("data", exist_ok=True)
+    with open("data/raceResults.json", "w") as f:
+        json.dump(results_by_round, f, indent=2)
+    r.setex(key, 86400, json.dumps(results_by_round))
 
-        return results_by_round
-
-    print("⚠️ No valid results found. Returning fallback.")
-    return {
-        "results": [],
-        "race_name": "Unavailable",
-        "location": {"circuit": "?", "country": "?"}
-    }
+    return results_by_round
 
 
 @router.get("/schedule", tags=["Race Info"])

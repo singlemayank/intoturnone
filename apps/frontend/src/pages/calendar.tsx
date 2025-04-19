@@ -41,9 +41,10 @@ export default function CalendarPage() {
   );
 
   const { data: resultsMap } = useSWR<RaceResults>(
-    `${API_BASE}/race/results/all`,
+    `${API_BASE}/race/podiums/all`,
     apiFetcher
   );
+  
 
   const [showUpcoming, setShowUpcoming] = useState(true);
   const now = new Date();

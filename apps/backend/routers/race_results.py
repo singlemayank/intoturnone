@@ -1,36 +1,41 @@
-# race_results.py
 from fastapi import APIRouter
-from datetime import datetime
-from services.fastf1_service import get_race_podium_by_round
-from utils.redis_client import r
 import json
+import os
+from utils.redis_client import r
 
 router = APIRouter()
 
-@router.get("/race/results/all", tags=["Race Info"])
+@router.get("/race/podiums/all", tags=["Race Info"])
 async def get_all_race_podiums():
-    key = "race:results:all"
-    cached = r.get(key)
-    if cached:
-        return json.loads(cached)
+    key = "race:podiums:all"
 
-    current_year = datetime.utcnow().year
-    results_by_round = {}
-
-    for round_number in range(1, 25):
+    # ✅ 1st: Try file
+    path = "data/raceResults.json"
+    if os.path.exists(path):
         try:
-            data = get_race_podium_by_round(current_year, round_number)
+            with open(path, "r") as f:
+                full_data = json.load(f)
 
-            # Stop once we hit a race with no data (future)
-            if not data or "top3" not in data or len(data["top3"]) < 3:
-                print(f"🛑 Stopping at round {round_number} — no result data")
-                break
+            # Only extract podiums
+            podiums = {
+                round_: {"top3": race["top3"]}
+                for round_, race in full_data.items()
+                if isinstance(race, dict) and "top3" in race
+            }
 
-            results_by_round[round_number] = data
-        except Exception as ex:
-            print(f"⚠️ Skipping round {round_number}: {ex}")
-            break  # Assume future rounds also have no data
+            # ✅ Cache to Redis
+            r.setex(key, 86400, json.dumps(podiums))
 
+            return podiums
+        except Exception as e:
+            print(f"⚠️ Error reading raceResults.json: {e}")
 
-    r.setex(key, 300, json.dumps(results_by_round))  # cache for 5 minutes
-    return results_by_round
+    # ❗ 2nd: Fallback to Redis (if file missing or error)
+    try:
+        cached = r.get(key)
+        if cached:
+            return json.loads(cached)
+    except Exception as e:
+        print(f"⚠️ Redis read failed: {e}")
+
+    return {"message": "No podium data available yet."}
