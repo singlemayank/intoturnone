@@ -41,7 +41,7 @@ export default function CalendarPage() {
   );
 
   const { data: resultsMap } = useSWR<RaceResults>(
-    `${API_BASE}/race/results/all?secret=abc123`,
+    `${API_BASE}/race/results/all`,
     apiFetcher
   );
 
