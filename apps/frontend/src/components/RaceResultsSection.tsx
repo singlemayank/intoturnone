@@ -67,27 +67,18 @@ export default function RaceResultsSection() {
       </div>
 
       <div className="flex justify-center items-end gap-4 w-full mb-8 flex-wrap md:flex-nowrap">
-      {podiumDrivers.map((driver, index) => {
+        {podiumDrivers.map((driver, index) => {
           if (!driver) return null;
 
-          const mobileOrderClass =
-            driver.position === 1 ? 'order-1' :
-            driver.position === 2 ? 'order-2' :
-            driver.position === 3 ? 'order-3' : '';
-
-          const desktopOrderClass =
-            driver.position === 1 ? 'md:order-2' :
-            driver.position === 2 ? 'md:order-1' :
-            driver.position === 3 ? 'md:order-3' : '';
+          const orderClass = {
+            1: 'order-1 md:order-2',
+            2: 'order-2 md:order-1',
+            3: 'order-3 md:order-3',
+          }[driver.position] || '';
 
           const isFirst = driver.position === 1;
-          /* const isSecond = driver.position === 2;
-          const isThird = driver.position === 3; */
-
           const teamColor = teamColorMap[driver.team] || '#333';
-          const initials = driver.full_name || '??';
-
-          const orderClass = `${mobileOrderClass} ${desktopOrderClass}`;
+          const driverNumber = driver.driver_number ?? '??';
 
           return (
             <motion.div
@@ -111,7 +102,7 @@ export default function RaceResultsSection() {
                   fontFamily: 'Orbitron, sans-serif',
                 }}
               >
-                {initials}
+                {driverNumber}
               </div>
 
               <p className="font-bold text-sm">{driver.full_name}</p>
