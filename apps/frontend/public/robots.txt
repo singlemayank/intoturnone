@@ -2,5 +2,6 @@
 
 User-agent: *
 Allow: /
-
+Disallow: /blog/[
+Disallow: /blog/%5Bslug%5D
 Sitemap: https://intoturnone.com/sitemap.xml
