@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 export interface DriverStanding {
   position: string;
   driver: string;
