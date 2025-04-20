@@ -19,6 +19,7 @@ export interface Session {
 }
 
 export interface UpcomingRace {
+  race_name: ReactNode;
   start_time_utc: string; // ✅ No more `any`
   country: string;
   FirstPractice?: Session;

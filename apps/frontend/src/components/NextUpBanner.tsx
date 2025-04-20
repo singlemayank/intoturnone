@@ -6,6 +6,9 @@ import { flagMap } from '@/utils/flagMap';
 
 export default function NextUpBanner() {
   const { nextRace } = useNextRace();
+  useEffect(() => {
+    console.log('🧪 nextRace:', nextRace);
+  }, [nextRace]);
   const [countdown, setCountdown] = useState('Loading...');
   const [revealBanner, setRevealBanner] = useState(false);
   const [userTime, setUserTime] = useState('');
@@ -83,9 +86,9 @@ export default function NextUpBanner() {
       {/* Content */}
       <div className="relative z-10 py-4 px-4 md:py-6 md:px-8 flex flex-col items-center text-center font-orbitron">
         <h2 className="text-lg md:text-2xl text-red-500 mb-1 uppercase tracking-wide font-bold">
-          Next Up: 🏁 {nextRace.raceName}
+          Next Up: 🏁 {nextRace?.race_name}
         </h2>
-
+        
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
           {nextRace.raceName}
         </h1>
