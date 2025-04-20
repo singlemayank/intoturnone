@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Head from 'next/head';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import FeaturedCarousel from '@/components/FeaturedCarousel';
 
 
 interface FrontMatter {
