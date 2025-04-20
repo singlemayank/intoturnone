@@ -12,13 +12,13 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import path from 'path';
 import matter from 'gray-matter';
 import fs from 'fs';
-interface FrontMatter {
-  title: string;
-  date: string;
-  slug: string;
-  heroImage?: string;
-  keywords?: string[];
-}
+// interface FrontMatter {
+//   title: string;
+//   date: string;
+//   slug: string;
+//   heroImage?: string;
+//   keywords?: string[];
+// }
 
 interface BlogPost {
   title: string;
