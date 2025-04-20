@@ -1,3 +1,4 @@
+
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,8 +9,54 @@ import StandingsPreview from '@/components/StandingsPreview';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import RaceResultsSection from '@/components/RaceResultsSection';
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import path from 'path';
+import matter from 'gray-matter';
+import fs from 'fs';
+interface FrontMatter {
+  title: string;
+  date: string;
+  slug: string;
+  heroImage?: string;
+  keywords?: string[];
+}
 
-export default function HomePage() {
+interface BlogPost {
+  title: string;
+  image: string;
+  slug: string;
+  date: string;
+  keywords: string[];
+}
+
+export async function getStaticProps() {
+  const blogDir = path.join(process.cwd(), 'content/blog');
+  const filenames = fs.readdirSync(blogDir);
+
+  const allPosts: BlogPost[] = filenames.map((filename: string) => {
+    const filePath = path.join(blogDir, filename);
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const { data } = matter(fileContent);
+
+    return {
+      title: data.title,
+      image: data.heroImage || '/default.jpg',
+      slug: filename.replace(/\.mdx?$/, ''),
+      date: data.date,
+      keywords: data.keywords || [],
+    };
+  });
+
+  // Sort by date (latest first)
+  allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return {
+    props: {
+      posts: allPosts.slice(0, 6), // limit to 6 latest for carousel
+    },
+  };
+}
+
+export default function HomePage({ posts }: { posts: BlogPost[] }) {
   return (
     <>
       <Head>
@@ -46,7 +93,7 @@ export default function HomePage() {
 
         {/* Featured Carousel */}
         <section id="featured" className="py-16 px-6 bg-black max-w-7xl mx-auto">
-          <FeaturedCarousel />
+          <FeaturedCarousel posts={posts} />
         </section>
 
          {/* 🏁 Podium Section */}
@@ -75,3 +122,4 @@ export default function HomePage() {
     </>
   );
 }
+

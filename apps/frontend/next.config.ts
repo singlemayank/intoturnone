@@ -1,28 +1,33 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
+import withMDX from '@next/mdx';
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === 'production';
 
-const withMDX = require('@next/mdx')({
-  extension: /\.mdx?$/
-});
-
-module.exports = withMDX({
-  pageExtensions: ['ts', 'tsx', 'md', 'mdx']
+const withMdx = withMDX({
+  extension: /\.mdx?$/,
 });
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-
+  pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.motorsport.com',
+      },
+    ],
+  },
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: '/api/:path*',
         destination: isProd
-          ? "https://api.intoturnone.com/:path*"
-          : "http://localhost:8000/:path*",
+          ? 'https://api.intoturnone.com/:path*'
+          : 'http://localhost:8000/:path*',
       },
     ];
   },
 };
 
-export default nextConfig;
+export default withMdx(nextConfig);
