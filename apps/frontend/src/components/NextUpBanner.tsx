@@ -83,7 +83,7 @@ export default function NextUpBanner() {
       {/* Content */}
       <div className="relative z-10 py-4 px-4 md:py-6 md:px-8 flex flex-col items-center text-center font-orbitron">
         <h2 className="text-lg md:text-2xl text-red-500 mb-1 uppercase tracking-wide font-bold">
-          Next Up: 🏁 Race
+          Next Up: 🏁 {nextRace.raceName}
         </h2>
 
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
