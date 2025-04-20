@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
           ? 'https://api.intoturnone.com/:path*'
           : 'http://localhost:8000/:path*',
       },
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap', // 👈 This powers your dynamic sitemap
+      },
     ];
   },
 };

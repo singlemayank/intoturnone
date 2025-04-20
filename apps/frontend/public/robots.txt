@@ -1,0 +1,6 @@
+# public/robots.txt
+
+User-agent: *
+Allow: /
+
+Sitemap: https://intoturnone.com/sitemap.xml
